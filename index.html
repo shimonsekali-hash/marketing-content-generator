@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחולל תוכן שיווקי - מוצרי טבע</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #11998e;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .section h2 {
+            color: #11998e;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .product-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .product-card:hover {
+            border-color: #11998e;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .product-card.selected {
+            background: #11998e;
+            color: white;
+            border-color: #11998e;
+        }
+        
+        .product-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .product-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .content-ideas {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .idea-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            border-right: 5px solid #11998e;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .idea-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .idea-type {
+            background: #11998e;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .idea-content {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            white-space: pre-wrap;
+            line-height: 1.8;
+        }
+        
+        .idea-meta {
+            display: grid;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+        
+        .meta-item {
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border-right: 3px solid #ffc107;
+        }
+        
+        .meta-label {
+            font-weight: bold;
+            color: #856404;
+            margin-left: 5px;
+        }
+        
+        button {
+            background: #11998e;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #0d7a6f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        button.secondary {
+            background: #667eea;
+        }
+        
+        button.secondary:hover {
+            background: #5568d3;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 5px solid #28a745;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .ai-prompt-box {
+            background: #2d2d2d;
+            color: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            direction: ltr;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        
+        .step-indicator {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .step-indicator strong {
+            color: #11998e;
+        }
+        
+        .add-product-form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #11998e;
+        }
+        
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌿 מחולל תוכן שיווקי - מוצרי טבע</h1>
+        <p class="subtitle">צור תוכן מקצועי לרשתות חברתיות בשניות</p>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalPosts">0</div>
+                <div class="stat-label">פוסטים יצרת</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="thisWeek">0</div>
+                <div class="stat-label">השבוע</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalProducts">3</div>
+                <div class="stat-label">מוצרים</div>
+            </div>
+        </div>
+        
+        <!-- Step 1: Select Product -->
+        <div id="step1" class="section">
+            <h2>שלב 1: בחר מוצר לשיווק</h2>
+            <div class="product-grid" id="productGrid"></div>
+            <button onclick="showAddProduct()">➕ הוסף מוצר חדש</button>
+            
+            <div id="addProductForm" class="add-product-form hidden">
+                <h3>הוסף מוצר חדש</h3>
+                <label>שם המוצר:</label>
+                <input type="text" id="newProductName" placeholder="לדוגמה: שמן ארגן אורגני">
+                
+                <label>אמוג'י (אייקון):</label>
+                <input type="text" id="newProductIcon" placeholder="🌿" maxlength="2">
+                
+                <label>תיאור המוצר:</label>
+                <textarea id="newProductDesc" rows="3" placeholder="תיאור קצר של המוצר, יתרונות, מה מיוחד בו..."></textarea>
+                
+                <label>קהל יעד:</label>
+                <input type="text" id="newProductAudience" placeholder="לדוגמה: נשים 25-45 המעוניינות בטיפוח טבעי">
+                
+                <button onclick="addNewProduct()">✅ הוסף מוצר</button>
+                <button class="secondary" onclick="cancelAddProduct()">ביטול</button>
+            </div>
+        </div>
+        
+        <!-- Step 2: Generate Content -->
+        <div id="step2" class="section hidden">
+            <div class="step-indicator">
+                שלב 2: <strong id="selectedProductName"></strong>
+            </div>
+            <h2>צור רעיונות לתוכן</h2>
+            <p style="margin-bottom: 15px;">הכלי יצור עבורך 5 רעיונות לפוסטים מוכנים לשימוש</p>
+            
+            <button onclick="generatePrompt()">🎨 צור רעיונות לתוכן</button>
+        </div>
+        
+        <!-- Step 3: Use AI Prompt -->
+        <div id="step3" class="section hidden">
+            <h2>שלב 3: העתק והדבק ב-AI</h2>
+            <p style="margin-bottom: 15px;">העתק את הפרומפט הזה והדבק ב-Claude, ChatGPT או Gemini:</p>
+            
+            <div class="ai-prompt-box" id="aiPromptBox"></div>
+            
+            <button onclick="copyPrompt()">📋 העתק פרומפט</button>
+            <button class="secondary" onclick="showStep4()">✅ הדבקתי ב-AI, קיבלתי תשובה</button>
+        </div>
+        
+        <!-- Step 4: Results -->
+        <div id="step4" class="section hidden">
+            <h2>שלב 4: העתק את התוכן שקיבלת</h2>
+            <p style="margin-bottom: 15px;">ה-AI יצר לך 5 רעיונות. כל רעיון כולל:</p>
+            <ul style="margin: 15px 0; padding-right: 20px; line-height: 2;">
+                <li>📝 טקסט מוכן לפרסום</li>
+                <li>📸 רעיון לתמונה או וידאו</li>
+                <li>#️⃣ האשטגים רלוונטיים</li>
+                <li>🎯 קריאה לפעולה (CTA)</li>
+            </ul>
+            
+            <div class="success-message">
+                פשוט תעתיק את הטקסט המוכן ותדביק בפייסבוק/אינסטגרם! 🎉
+            </div>
+            
+            <button onclick="markAsPosted()">✅ פרסמתי פוסט!</button>
+            <button class="secondary" onclick="startOver()">🔄 צור תוכן למוצר אחר</button>
+        </div>
+    </div>
+
+    <script>
+        // Default products
+        const defaultProducts = [
+            {
+                name: "שמן ארגן אורגני",
+                icon: "🌿",
+                description: "שמן ארגן טהור 100% ממרוקו, עשיר בויטמין E ושמנים חיוניים. מזין, מחייה ומשקם את העור והשיער.",
+                audience: "נשים בנות 25-55 המעוניינות בטיפוח טבעי ואיכותי"
+            },
+            {
+                name: "סבון טבעי בעבודת יד",
+                icon: "🧼",
+                description: "סבון עשוי משמנים צמחיים טבעיים, ללא כימיקלים מזיקים. מתאים לעור רגיש.",
+                audience: "כל המשפחה, במיוחד אנשים עם עור רגיש או אלרגיות"
+            },
+            {
+                name: "תה צמחים אורגני",
+                icon: "🍵",
+                description: "תערובת צמחי מרפא אורגניים, לרגיעה ושיפור העיכול. ללא קפאין.",
+                audience: "אנשים המחפשים אורח חיים בריא ורגיעה טבעית"
+            }
+        ];
+
+        let products = [];
+        let selectedProduct = null;
+        let stats = {
+            totalPosts: 0,
+            thisWeek: 0
+        };
+
+        function init() {
+            // Load from storage or use defaults
+            const saved = localStorage.getItem('marketingProducts');
+            if (saved) {
+                products = JSON.parse(saved);
+            } else {
+                products = defaultProducts;
+                saveProducts();
+            }
+            
+            const savedStats = localStorage.getItem('marketingStats');
+            if (savedStats) {
+                stats = JSON.parse(savedStats);
+            }
+            
+            renderProducts();
+            updateStats();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            
+            products.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.onclick = () => selectProduct(index);
+                
+                card.innerHTML = `
+                    <div class="product-icon">${product.icon}</div>
+                    <div class="product-name">${product.name}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+            
+            document.getElementById('totalProducts').textContent = products.length;
+        }
+
+        function selectProduct(index) {
+            selectedProduct = products[index];
+            document.getElementById('selectedProductName').textContent = selectedProduct.name;
+            
+            // Show step 2
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        function generatePrompt() {
+            const prompt = `אני צריך 5 רעיונות לפוסטים ברשתות חברתיות (פייסבוק/אינסטגרם) בעברית עבור המוצר הבא:
+
+📦 מוצר: ${selectedProduct.name}
+📝 תיאור: ${selectedProduct.description}
+👥 קהל יעד: ${selectedProduct.audience}
+
+עבור כל רעיון, אנא ספק:
+1. 💡 סוג הפוסט (לפני ואחרי / טיפ מהיר / סיפור אישי / שאלה לקהל / מבצע מיוחד)
+2. 📝 טקסט מוכן לפרסום (2-4 משפטים, מושך, עם אימוג'ים)
+3. 📸 רעיון לתמונה/וידאו
+4. #️⃣ 5-7 האשטגים רלוונטיים בעברית
+5. 🎯 קריאה לפעולה (CTA)
+
+חשוב: 
+- כתוב בעברית בלבד
+- הטון צריך להיות חם, אותנטי ומזמין
+- התאם את התוכן לקהל הישראלי
+- השתמש בשפה פשוטה ונגישה`;
+
+            document.getElementById('aiPromptBox').textContent = prompt;
+            
+            // Show step 3
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+        }
+
+        function copyPrompt() {
+            const promptBox = document.getElementById('aiPromptBox');
+            const text = promptBox.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ הפרומפט הועתק! עכשיו הדבק אותו ב-AI (Claude/ChatGPT/Gemini)');
+            });
+        }
+
+        function showStep4() {
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.remove('hidden');
+        }
+
+        function markAsPosted() {
+            stats.totalPosts++;
+            stats.thisWeek++;
+            saveStats();
+            updateStats();
+            
+            alert('🎉 כל הכבוד! הפוסט נספר. המשך ככה!');
+            startOver();
+        }
+
+        function startOver() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            
+            selectedProduct = null;
+        }
+
+        function showAddProduct() {
+            document.getElementById('addProductForm').classList.remove('hidden');
+        }
+
+        function cancelAddProduct() {
+            document.getElementById('addProductForm').classList.add('hidden');
+            clearAddProductForm();
+        }
+
+        function addNewProduct() {
+            const name = document.getElementById('newProductName').value.trim();
+            const icon = document.getElementById('newProductIcon').value.trim();
+            const desc = document.getElementById('newProductDesc').value.trim();
+            const audience = document.getElementById('newProductAudience').value.trim();
+            
+            if (!name || !icon || !desc || !audience) {
+                alert('אנא מלא את כל השדות');
+                return;
+            }
+            
+            products.push({
+                name: name,
+                icon: icon,
+                description: desc,
+                audience: audience
+            });
+            
+            saveProducts();
+            renderProducts();
+            cancelAddProduct();
+            
+            alert('✅ המוצר נוסף בהצלחה!');
+        }
+
+        function clearAddProductForm() {
+            document.getElementById('newProductName').value = '';
+            document.getElementById('newProductIcon').value = '';
+            document.getElementById('newProductDesc').value = '';
+            document.getElementById('newProductAudience').value = '';
+        }
+
+        function updateStats() {
+            document.getElementById('totalPosts').textContent = stats.totalPosts;
+            document.getElementById('thisWeek').textContent = stats.thisWeek;
+        }
+
+        function saveProducts() {
+            localStorage.setItem('marketingProducts', JSON.stringify(products));
+        }
+
+        function saveStats() {
+            localStorage.setItem('marketingStats', JSON.stringify(stats));
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
